@@ -19,7 +19,10 @@ type Campaign struct {
 	Contact   []Contact
 }
 
+
+// método que inicializa uma nova campanha
 func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
+	// validando os campos se estão todos preenchidos
 	if name == "" {
 		return nil, errors.New("Name must be required")
 	} else if content == "" {
@@ -34,6 +37,7 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 		contacts[index].Email = email
 	}
 
+	// retornando a nova campanha
 	return &Campaign{
 		ID:        xid.New().String(),
 		Name:      name,
