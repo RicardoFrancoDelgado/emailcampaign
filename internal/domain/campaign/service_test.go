@@ -2,6 +2,7 @@ package campaign
 
 import (
 	"emailcampaing/internal/contract"
+	internallerrors "emailcampaing/internal/internall-errors"
 	"errors"
 	"testing"
 
@@ -71,6 +72,5 @@ func Test_Create_SaveOnDatabase(t *testing.T) {
 
 	_, err := service.Create(newCampaign)
 
-	assert.Equal("errors to save on database", err.Error())
+	assert.True(errors.Is(internallerrors.ErrInternal, err))
 }
-
