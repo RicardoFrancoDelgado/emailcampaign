@@ -14,8 +14,8 @@ type Campaign struct {
 	ID        string    `validate:"required"`
 	Name      string    `validate:"min=5,max=20"`
 	CreatedOn time.Time `validate:"required"`
-	Content   string    `validate:"required"`
-	Contact   []Contact `validate:"min=5"`
+	Content   string    `validate:"min=5,max=1024"`
+	Contact   []Contact `validate:"min=1,dive"`
 }
 
 // método que inicializa uma nova campanha
