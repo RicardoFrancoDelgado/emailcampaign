@@ -1,35 +1,25 @@
 package campaign
 
 import (
-	"errors"
 	"time"
 
 	"github.com/rs/xid"
 )
 
 type Contact struct {
-	Email string
+	Email string `validate:"email"`
 }
 
 type Campaign struct {
-	ID        string
-	Name      string
-	CreatedOn time.Time
-	Content   string
-	Contact   []Contact
+	ID        string    `validate:"required"`
+	Name      string    `validate:"min=5,max=20"`
+	CreatedOn time.Time `validate:"required"`
+	Content   string    `validate:"required"`
+	Contact   []Contact `validate:"min=5"`
 }
-
 
 // método que inicializa uma nova campanha
 func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
-	// validando os campos se estão todos preenchidos
-	if name == "" {
-		return nil, errors.New("Name must be required")
-	} else if content == "" {
-		return nil, errors.New("Content must be required")
-	} else if len(emails) == 0 {
-		return nil, errors.New("Contact must be required")
-	}
 
 	contacts := make([]Contact, len(emails))
 
