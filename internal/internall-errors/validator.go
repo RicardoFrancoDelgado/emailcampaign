@@ -23,9 +23,9 @@ func ValidateStruct(obj interface{}) error {
 	case "max":
 		return errors.New(field + " is required with max " + validationErr.Param())
 	case "min":
-		return errors.New(field + " is required " + validationErr.Param())
+		return errors.New(field + " is required with min " + validationErr.Param())
 	case "email":
-		return errors.New(field + " is required with max" + validationErr.Param())
+		return errors.New(field + " is invalid")
 	}
 
 	return nil
