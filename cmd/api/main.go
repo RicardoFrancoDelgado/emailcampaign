@@ -1,24 +1,14 @@
 package main
 
 import (
+	"emailcampaing/internal/contract"
+	"emailcampaing/internal/domain/campaign"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-
 	"github.com/go-chi/render"
 )
-
-type product struct {
-	ID   int
-	Name string
-}
-
-type myHandler struct{}
-
-func (m myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("My handler"))
-}
 
 func main() {
 	r := chi.NewRouter()
@@ -27,50 +17,24 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	m := myHandler{}
-
-	r.Handle("/handler", m)
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		println("endpoint")
-	})
-
-	r.Get("/{product}", func(w http.ResponseWriter, r *http.Request) {
-		param := chi.URLParam(r, "product")
-		w.Write([]byte(param))
-	})
-
-	r.Get("/users", func(w http.ResponseWriter, r *http.Request) {
-		name := r.URL.Query().Get("name")
-		age := r.URL.Query().Get("age")
-
-		if name != "" {
-			w.Write([]byte(name + " " + age))
-		} else {
-			w.Write([]byte("users"))
+	service := campaign.Service{}
+	r.Post("/campaigns", func(w http.ResponseWriter, r *http.Request) {
+		var request contract.NewCampaignDto
+		err := render.DecodeJSON(r.Body, &request)
+		if err != nil {
+			println(err)
 		}
-	})
 
-	r.Get("/json", func(w http.ResponseWriter, r *http.Request) {
-		obj := map[string]string{"Message": "success"}
-		render.JSON(w, r, obj)
-	})
+		id, err := service.Create(request)
+		if err != nil {
+			render.Status(r, 400)
+			render.JSON(w, r, map[string]string{"error": err.Error()})
+			return
+		}
 
-	r.Post("/product", func(w http.ResponseWriter, r *http.Request) {
-		var product product
-
-		render.DecodeJSON(r.Body, &product)
-		product.ID = 5
-		render.JSON(w, r, product)
+		render.Status(r, 201)
+		render.JSON(w, r, map[string]string{"id": id})
 	})
 
 	http.ListenAndServe(":3000", r)
-}
-
-func myMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		println("before")
-		next.ServeHTTP(w, r)
-		println("after")
-	})
 }
