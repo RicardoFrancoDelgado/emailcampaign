@@ -3,6 +3,9 @@ package main
 import (
 	"emailcampaing/internal/contract"
 	"emailcampaing/internal/domain/campaign"
+	"emailcampaing/internal/infrastructure/database"
+	internallerrors "emailcampaing/internal/internall-errors"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -17,17 +20,22 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	service := campaign.Service{}
+	service := campaign.Service{
+		Repository: &database.CampaignRepository{},
+	}
 	r.Post("/campaigns", func(w http.ResponseWriter, r *http.Request) {
 		var request contract.NewCampaignDto
-		err := render.DecodeJSON(r.Body, &request)
-		if err != nil {
-			println(err)
-		}
+		render.DecodeJSON(r.Body, &request)
 
 		id, err := service.Create(request)
 		if err != nil {
-			render.Status(r, 400)
+
+			if errors.Is(err, internallerrors.ErrInternal) {
+				render.Status(r, 500)
+			} else {
+				render.Status(r, 400)
+			}
+
 			render.JSON(w, r, map[string]string{"error": err.Error()})
 			return
 		}
