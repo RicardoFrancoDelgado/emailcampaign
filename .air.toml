@@ -1,0 +1,60 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # Comando de build apontando para a pasta onde o seu main.go está localizado
+  cmd = "go build -o ./tmp/main.exe ./cmd/api"
+  
+  # Caminho do binário gerado
+  bin = "./tmp/main.exe"
+  
+  # Comando exato de execução (ajuda a evitar problemas de caminho no Windows)
+  full_bin = ".\\tmp\\main.exe"
+  
+  # Extensões que o air vai observar para reiniciar o servidor
+  include_ext = ["go", "tpl", "tmpl", "html", "env"]
+  
+  # Pastas que o air deve ignorar completamente (incluí docs e tmp)
+  exclude_dir = ["assets", "tmp", "vendor", "docs"]
+  
+  # Arquivos específicos para ignorar
+  exclude_file = []
+  
+  # Ignorar arquivos de teste no rebuild automático
+  exclude_regex = ["_test.go"]
+  
+  # Otimização para ignorar arquivos que não mudaram
+  exclude_unchanged = false
+  
+  # Seguir links simbólicos
+  follow_symlink = false
+  
+  # Arquivo onde os erros de compilação serão salvos (já existe na sua pasta tmp)
+  log = "build-errors.log"
+  
+  # Tempo de espera após salvar o arquivo antes de buildar (em milissegundos)
+  delay = 1000
+  
+  # Interrompe a execução atual se o novo build falhar
+  stop_on_error = true
+  
+  # Envia sinal de interrupção (SIGINT) no lugar de forçar o encerramento (SIGKILL)
+  send_interrupt = false
+  
+  # Tempo de espera antes de matar a aplicação após o interrupt
+  kill_delay = 500
+
+[log]
+  # Mostrar o horário nos logs do air
+  time = false
+
+[color]
+  # Personalização das cores no terminal
+  main = "magenta"
+  watcher = "cyan"
+  build = "yellow"
+  runner = "green"
+
+[misc]
+  # Remove o diretório tmp (e o executável) quando você fechar o air no terminal
+  clean_on_exit = false
